@@ -1,7 +1,14 @@
+// Packages
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
+
+// Config vars
 require('dotenv').config();
+
+//Models
+const Listing = require('./models/Listing');
+
 // Return array of job listings
 const scrapeListings = async (page) => {
 	await page.goto('https://sfbay.craigslist.org/d/software-qa-dba-etc/search/sof');
@@ -43,6 +50,8 @@ const scrapeDescriptions = async (listings, page) => {
 		listings[i].compensation = compensation;
 		console.log(listings[i].jobDescription);
 		console.log(listings[i].compensation);
+		const listingModel = new Listing(listings[i]);
+		await listingModel.save();
 		await sleep(1000); // 1 second wait
 	}
 };
